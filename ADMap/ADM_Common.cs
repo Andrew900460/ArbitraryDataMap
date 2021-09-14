@@ -9,6 +9,17 @@ namespace SerialMap {
 	public delegate void WriterFunction(BinaryWriter stream, object data);
 	public delegate object ReaderFunction(BinaryReader stream);
 
+	// Where the "base types" of ADMaps are defined.
+	// Any data that could be composed of many of these "base types" would be held inside the "ADMap" type.
+
+	// This is what allows you to save any information you want, in a way that is "order agnostic".
+	// Meaning, the order at which data is saved to file doesn't matter, because the data is accessed by a string name.
+
+	// You may add your own base types to this list if you want.
+	// Like Vectors, Colors, Quaternions, Special ID values, etc.
+	// Each type has an integer "type id" which is used to identify that particular data type in the file.
+	// Each id HAS to be unique, so the systems knows which type is which in file.
+
 	public class ADM_Common {
 
 		private readonly static List<ADMType> MainDataTypeList = new List<ADMType>() {
@@ -40,12 +51,18 @@ namespace SerialMap {
 			}
 		}
 
+		// Will automatically run before any of the above variables are accessed.
+		// It's for initialization
 		static ADM_Common() {
 			foreach(ADMType type in MainDataTypeList) {
 				typeSortedList.Add(type.type, type);
 				typeIdSortedList.Add(type.typeID, type);
 			}
 		}
+
+		// These static functions are what are used to govern how the base types are saved to file.
+		// If you make your own base type, you will need to make your own "Write" and "Read" function as well.
+		// And then include those function named in the base type definion above ^ "MainDataTypeList"
 
 		private static void WriteByte(BinaryWriter stream, object data) =>
 			stream.Write((byte)data);

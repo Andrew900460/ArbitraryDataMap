@@ -5,14 +5,14 @@ using System.IO;
 namespace SerialMap {
 	using static ADM_Util;
 	public class ADMList {
-		private List<ADMap.MapUnit> dataList = new List<ADMap.MapUnit>();
+		private List<ADMapElement> dataList = new List<ADMapElement>();
 
 		private ADMType listType;
 
 		public int Length => dataList.Count;
 		public ADMType ListType => listType;
 
-		public List<ADMap.MapUnit> DataList => dataList;
+		public List<ADMapElement> DataList => dataList;
 
 		public ADMList(ADMType listType) {
 			this.listType = listType;
@@ -31,16 +31,16 @@ namespace SerialMap {
 					else
 						data = element;
 
-					dataList.Add(new ADMap.MapUnit(listType, data));
+					dataList.Add(new ADMapElement(listType, data));
 				}
 			}
 		}
 
 		public void Add(object data) {
-			dataList.Add(new ADMap.MapUnit(listType, data));
+			dataList.Add(new ADMapElement(listType, data));
 		}
 
-		public ADMap.MapUnit Get(int index) {
+		public ADMapElement Get(int index) {
 			return dataList[index];
 		}
 

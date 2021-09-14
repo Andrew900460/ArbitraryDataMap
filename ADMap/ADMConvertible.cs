@@ -1,11 +1,17 @@
 ﻿
 
 namespace SerialMap {
+
+	// Attach this interface to one of your classes to define how it will be serialized
+
 	public interface ADMConvertible {
 		ADMap SaveToMap(ADMap map = null);
 
 		object LoadFromMap(ADMap map);
 	}
+
+	// These extension functions make it simple to convert (any) object which implements ADMConvertible
+	// to be saved into a ADMap
 
 	public static class ConverterExtension {
 		public static ADMap GenerateMap(this ADMConvertible data) {

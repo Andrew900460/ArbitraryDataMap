@@ -2,7 +2,6 @@
 
 
 namespace SerialMap {
-
 	public class ADMType {
 		public readonly int typeID;
 		public readonly Type type;
@@ -12,5 +11,4 @@ namespace SerialMap {
 			(typeID, this.type, WriterFunction, ReaderFunction) = (id, type, writer, reader);
 		}
 	}
-
 }

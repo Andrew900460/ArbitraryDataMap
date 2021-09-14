@@ -5,17 +5,15 @@ using System.Collections;
 
 namespace SerialMap {
 	using static ADM_Util;
-	public class ADMap : IEnumerable<KeyValuePair<string, ADMap.MapUnit>> {
 
-		private SortedDictionary<string, MapUnit> rootMap =
-			new SortedDictionary<string, MapUnit>();
+	// Primary class for holding all of the data to be serilaized to file.
+	// You have to populate an ADMap with the data from your objects first.
+	// Then you can call "WriteToStream" to write the data of the map to file, or to another stream.
 
-		public class MapUnit {
-			public ADMType dataType;
-			public object data;
-			public MapUnit(ADMType type, object data) =>
-				(dataType, this.data) = (type, data);
-		}
+	public class ADMap : IEnumerable<KeyValuePair<string, ADMapElement>> {
+
+		private SortedDictionary<string, ADMapElement> rootMap =
+			new SortedDictionary<string, ADMapElement>();
 
 		public void SetData<T>(string name, T data) {
 			ADMType type;
@@ -23,7 +21,7 @@ namespace SerialMap {
 			type = GetADMType<T>();
 			//}
 			//catch(Exception) { throw InvalidDataType; }
-			rootMap.Add(name, new MapUnit(type, data));
+			rootMap.Add(name, new ADMapElement(type, data));
 		}
 
 		public T GetData<T>(string name) {
@@ -32,7 +30,7 @@ namespace SerialMap {
 
 		public void WriteToStream(BinaryWriter writer) {
 			foreach(var kv in rootMap) {
-				MapUnit unit = kv.Value;
+				ADMapElement unit = kv.Value;
 				ADMType type = unit.dataType;
 				writer.Write(type.typeID);
 				writer.Write(kv.Key);
@@ -47,7 +45,7 @@ namespace SerialMap {
 			while((typeID = reader.ReadInt32()) != 0) {
 				string key = reader.ReadString();
 				var dataType = GetADMType(typeID);
-				MapUnit unit = new MapUnit(dataType, dataType.ReaderFunction(reader));
+				ADMapElement unit = new ADMapElement(dataType, dataType.ReaderFunction(reader));
 				rootMap.Add(key, unit);
 			}
 		}
@@ -80,11 +78,10 @@ namespace SerialMap {
 					string str = $"{keyAndTypeString}{element.Value.data}";
 					Console.WriteLine(str);
 				}
-
 			}
 		}
 
-		public IEnumerator<KeyValuePair<string, MapUnit>> GetEnumerator() => rootMap.GetEnumerator();
+		public IEnumerator<KeyValuePair<string, ADMapElement>> GetEnumerator() => rootMap.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => rootMap.GetEnumerator();
 
